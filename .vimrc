@@ -21,11 +21,14 @@ set expandtab        " expand tabs to spaces
 set textwidth=120
 " turn syntax highlighting on
 set t_Co=256
-syntax on
-set termguicolors
-colorscheme vanilla-cake
-let g:lightline = {}
-let g:lightline.colorscheme = 'vanilla_cake'
+syntax enable
+" set termguicolors
+if has('gui_running')
+  set background=light
+else
+  set background=dark
+endif
+colorscheme solarized
 " turn line numbers on
 set number
 " highlight matching braces
@@ -49,9 +52,9 @@ let g:DoxygenToolkit_authorName="John Doe <john@doe.com>"
 " in normal mode F2 will save the file
 nmap <F2> :w<CR>
 " in insert mode F2 will exit insert, save, enters insert again
-imap <F2> <ESC>:w<CR>i
-" switch between header/source with F4
-map <F4> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+imap <F2> <ESC>:w<CR>
+" Open explorer
+map  <F3> :Explore<CR>
 " recreate tags file with F5
 map <F5> :!ctags -R –c++-kinds=+p –fields=+iaS –extra=+q .<CR>
 " create doxygen comment
@@ -78,3 +81,15 @@ else
   map <M-Down> ]s
   map <M-Up> [s
 endif
+
+function! SwitchSourceHeader()
+  :w
+  if (expand ("%:e") == "cpp")
+    :e ../Include/%:t:r.h
+  else
+    :e ../Source/%:t:r.cpp
+  endif
+endfunction
+
+nmap <F4> :call SwitchSourceHeader()<CR>
+imap <F4> <ESC>:w <CR>
